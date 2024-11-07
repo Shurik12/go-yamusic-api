@@ -1,0 +1,7 @@
+{
+    "token": "your yandex music auth token",
+    "output": "output folder",
+	"log": "log folder",
+	"host": "server ip address (0.0.0.0 or localhost)",
+	"port": "server port (9000 or 8080)"
+}
