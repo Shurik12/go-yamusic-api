@@ -44,6 +44,31 @@ type (
 			} `json:"subscription"`
 		} `json:"result"`
 	}
+	AccountSettingsResp struct {
+		InvocationInfo InvocationInfo `json:"invocationInfo"`
+		Error          Error          `json:"error"`
+		Result         struct {
+			UID                       int       `json:"uid"`
+			LastFmScrobblingEnabled   bool      `json:"lastFmScrobblingEnabled"`
+			FacebookScrobblingEnabled bool      `json:"facebookScrobblingEnabled"`
+			ShuffleEnabled            bool      `json:"shuffleEnabled"`
+			AddNewTrackOnPlaylistTop  bool      `json:"addNewTrackOnPlaylistTop"`
+			VolumePercents            int       `json:"volumePercents"`
+			UserMusicVisibility       bool      `json:"userMusicVisibility"`
+			UserSocialVisibility      bool      `json:"userSocialVisibility"`
+			AdsDisabled               bool      `json:"adsDisabled"`
+			Modified                  time.Time `json:"modified"`
+			RbtDisabled               bool      `json:"rbtDisabled"`
+			Theme                     string    `json:"theme"`
+			PromosDisabled            bool      `json:"promosDisabled"`
+			AutoPlayRadio             bool      `json:"autoPlayRadio"`
+			SyncQueueEnabled          bool      `json:"syncQueueEnabled"`
+			ExplicitForbidden         bool      `json:"explicitForbidden"`
+			ChildModEnabled           bool      `json:"childModEnabled"`
+			WizardIsPassed            bool      `json:"wizardIsPassed"`
+			UserCollectionHue         int       `json:"userCollectionHue"`
+		} `json:"result"`
+	}
 )
 
 // GetStatus returns account's status
@@ -56,6 +81,20 @@ func (s *AccountService) GetStatus(
 	}
 
 	accountStatus := new(AccountStatusResp)
+	resp, err := s.client.Do(ctx, req, accountStatus)
+	return accountStatus, resp, err
+}
+
+// GetStatus returns account's status
+func (s *AccountService) GetUser(
+	ctx context.Context,
+) (*AccountSettingsResp, *http.Response, error) {
+	req, err := s.client.NewRequest(http.MethodGet, "account/settings", nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	accountStatus := new(AccountSettingsResp)
 	resp, err := s.client.Do(ctx, req, accountStatus)
 	return accountStatus, resp, err
 }
