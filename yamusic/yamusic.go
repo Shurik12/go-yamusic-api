@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -251,3 +252,13 @@ type (
 		Message string `json:"message"`
 	}
 )
+
+// print playlist structure to console or file
+func (c *Client) PrintPlaylists() {
+	result, _, _ := c.Playlists().List(context.Background(), 0)
+	playlists := result.Result
+	fmt.Println("User ", c.UserID(), " playlists:")
+	for _, playlist := range playlists {
+		fmt.Println("\t", playlist.Kind, ": ", playlist.Title)
+	}
+}

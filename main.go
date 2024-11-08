@@ -39,5 +39,6 @@ func main() {
 	accountStatus, _, _ := client.Account().GetUser(context.Background())
 	// add userID to client
 	client.SetUserID(accountStatus.Result.UID)
-	fmt.Println(client.UserID())
+
+	client.PrintPlaylists()
 }
