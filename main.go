@@ -41,4 +41,6 @@ func main() {
 	client.SetUserID(accountStatus.Result.UID)
 
 	client.PrintPlaylists()
+	client.Tracks().GetLike(context.Background())
+	client.GetTracksWithoutPlaylist()
 }

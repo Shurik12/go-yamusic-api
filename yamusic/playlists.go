@@ -134,6 +134,7 @@ type (
 			Tracks Tracks `json:"tracks"`
 		} `json:"result"`
 	}
+
 	// PlaylistsGetByKindsResp describes get user's playlists by kinds response
 	PlaylistsGetByKindsResp struct {
 		InvocationInfo InvocationInfo `json:"invocationInfo"`
@@ -274,8 +275,12 @@ func (s *PlaylistsService) Get(
 		return nil, nil, err
 	}
 
+	// var playlist interface{}
 	playlist := new(PlaylistsGetResp)
 	resp, err := s.client.Do(ctx, req, playlist)
+	// b, _ := io.ReadAll(resp.Body)
+	// fmt.Println(string(b))
+
 	return playlist, resp, err
 }
 

@@ -12,6 +12,8 @@ import (
 	"net/url"
 	"os"
 	"strings"
+
+	"github.com/schollz/progressbar/v3"
 )
 
 const (
@@ -261,4 +263,38 @@ func (c *Client) PrintPlaylists() {
 	for _, playlist := range playlists {
 		fmt.Println("\t", playlist.Kind, ": ", playlist.Title)
 	}
+}
+
+// print playlist structure to console or file
+func (c *Client) GetTracksWithoutPlaylist() []Track {
+	result, _, _ := c.Playlists().List(context.Background(), 0)
+	playlists := result.Result
+	bar := progressbar.Default(int64(len(playlists)))
+
+	tracks_in_playlist := map[string]bool{}
+	var tracks_without_playlist []Track
+	result1, _, _ := c.Tracks().GetLike(context.Background())
+	like_tracks := result1.Result.Library.Tracks
+
+	for _, playlist := range playlists {
+		bar.Add(1)
+		result, _, _ := c.Playlists().Get(context.Background(), c.UserID(), playlist.Kind)
+		tracks := result.Result.Tracks
+		for _, track := range tracks {
+			tracks_in_playlist[track.Track.ID] = true
+		}
+	}
+	fmt.Println(len(tracks_in_playlist))
+
+	fmt.Println(len(like_tracks))
+	for _, track := range like_tracks {
+		// fmt.Println(tracks_in_playlist[track.ID])
+		if !tracks_in_playlist[track.ID] {
+			tracks_without_playlist = append(tracks_without_playlist, track)
+		}
+	}
+
+	fmt.Println(len(tracks_without_playlist))
+
+	return tracks_without_playlist
 }

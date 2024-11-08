@@ -14,10 +14,24 @@ type (
 	TracksService struct {
 		client *Client
 	}
+	// TracksResp describes get user's tracks/like tracks/ response
 	TrackResp struct {
 		InvocationInfo InvocationInfo `json:"invocationInfo"`
 		Error          Error          `json:"error"`
 		Result         []Track        `json:"result"`
+	}
+	// TracksResp describes get user's tracks/like tracks/ response
+	LikeTracksResp struct {
+		InvocationInfo InvocationInfo `json:"invocationInfo"`
+		Error          Error          `json:"error"`
+		Result         struct {
+			Library struct {
+				UID          int     `json:"uid"`
+				Revision     int     `json:"revision"`
+				PlaylistUuid string  `json:"playlistUuid"`
+				Tracks       []Track `json:"tracks"`
+			} `json:"library"`
+		} `json:"result"`
 	}
 	// Response of track/%d/download_info
 	DownloadInfoResp struct {
@@ -66,6 +80,19 @@ func (t *TracksService) Get(ctx context.Context, id int) (*TrackResp, *http.Resp
 	track := new(TrackResp)
 	resp, err := t.client.Do(ctx, req, track)
 	return track, resp, err
+}
+
+// List returns playlists of the user
+func (t *TracksService) GetLike(ctx context.Context) (*LikeTracksResp, *http.Response, error) {
+	uri := fmt.Sprintf("users/%v/likes/tracks", t.client.userID)
+	fmt.Println(uri)
+	req, err := t.client.NewRequest(http.MethodGet, uri, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+	like_tracks := new(LikeTracksResp)
+	resp, err := t.client.Do(ctx, req, like_tracks)
+	return like_tracks, resp, err
 }
 
 // GetDownloadInfoResp returns DownloadInfoResp byt track's ID
