@@ -6,7 +6,9 @@ import (
 	"encoding/hex"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
 )
 
 type (
@@ -158,4 +160,15 @@ func (t *TracksService) GetDownloadURL(ctx context.Context, id int) (string, err
 		dlInfo.TS, dlInfo.Path,
 	)
 	return uri, nil
+}
+
+// Download track by DownloadURL by path on fs
+func (t *TracksService) Download(ctx context.Context, uri string) {
+	out, _ := os.Create("song.mp3")
+	defer out.Close()
+
+	resp, _ := http.Get(uri)
+	defer resp.Body.Close()
+
+	io.Copy(out, resp.Body)
 }

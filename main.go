@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/Shurik12/go-yamusic-api/yamusic"
 )
@@ -40,7 +41,13 @@ func main() {
 	// add userID to client
 	client.SetUserID(accountStatus.Result.UID)
 
-	client.PrintPlaylists()
-	client.Tracks().GetLike(context.Background())
-	client.GetTracksWithoutPlaylist()
+	// client.PrintPlaylists()
+	// client.Tracks().GetLike(context.Background())
+
+	track := client.GetTracksWithoutPlaylist()
+
+	track_id, _ := strconv.Atoi(track[0].ID)
+	uri, _ := client.Tracks().GetDownloadURL(context.Background(), track_id)
+	client.Tracks().Download(context.Background(), uri)
+	fmt.Println(uri)
 }
